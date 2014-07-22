@@ -8,6 +8,8 @@ define('BASE_NAMESPACE', 'FreightCostCalculator');
 $app = new Silex\Application();
 $app->register(new Silex\Provider\TwigServiceProvider(), array('twig.path' => BASE_DIR.'src/Views'));
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
+$app->register(new Silex\Provider\FormServiceProvider());
+$app->register(new Silex\Provider\TranslationServiceProvider());
 
 $app['debug'] = true;
 
