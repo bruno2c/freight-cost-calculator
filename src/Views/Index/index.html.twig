@@ -12,11 +12,67 @@
                 <div class="field">
                     {{ form_row(form.postcode) }}
                 </div>
-                <div class="ui blue submit button">Submit</div>
+                <input type="submit" class="ui blue submit button" value="Submit"/>
             </form>
         </div>
     </div>
 </div>
 
+<div id="alert-modal" class="ui small modal">
+  <i class="close icon"></i>
+  <div class="header">
+    Attention
+  </div>
+  <div class="content">
+	
+  </div>
+  <div class="actions">
+    <div class="ui button">
+      Close
+    </div>
+  </div>
+</div>
 
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		$(document).ready(function(){
+
+			$('.submit').click(function(e){
+				e.preventDefault();
+
+				validate();
+
+				var postcode = $('#calc_form_type_postcode').val();
+
+				$.ajax({
+					type: 'POST',
+					url: "{{ url('IndexController:calcFreightCostAjaxAction') }}",
+					data: {
+						postcode: postcode
+					},
+					success: function(data){
+						if(data.status == 500){
+							showAlert(data.error);
+						}
+					}
+				});
+			});
+		});
+
+		function validate()
+		{
+			if($('#calc_form_type_postcode').val() == undefined || $('#calc_form_type_postcode').val().lenght == 0){
+				showAlert('Postcode is empty');
+			}
+		}
+
+		function showAlert(message)
+		{
+			var modal = $('#alert-modal');
+			modal.find('.content').empty().html('<p>'+message+'</p>');
+			modal.modal('show');
+		}
+	</script>
 {% endblock %}

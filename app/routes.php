@@ -5,4 +5,4 @@ $app['controllers.index'] = $app->share(function() use ($app){
     });
 
 $app->get('/','controllers.index:indexAction')->bind('baseUrl');
-$app->get('/calc', 'controllers.index:indexAction')->bind('calc');
+$app->post('/calc_freight_cost', 'controllers.index:calcFreightCostAjaxAction')->bind('IndexController:calcFreightCostAjaxAction');
