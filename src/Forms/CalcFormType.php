@@ -10,7 +10,11 @@ class CalcFormType extends AbstractType
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('postcode', 'text');
+        $builder->add('postcode', 'text', array(
+                'attr' => array(
+
+                )
+            ));
 	}
 
 	public function getName()

@@ -4,13 +4,27 @@
         {% block head %}
             <title>{% block title %}{% endblock %} - Freight Cost Calculator</title>
         {% endblock %}
+
+        <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'>
+        <link rel="stylesheet" type="text/css" href="{{ asset('styles/style.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('styles/semantic.min.css') }}">
+
+        {% block stylesheets %}
+
+        {% endblock %}
     </head>
     <body>
-        <div id="content">{% block content %}{% endblock %}</div>
-        <div id="footer">
-            {% block footer %}
-                &copy; Copyright 2011 by <a href="http://domain.invalid/">you</a>.
-            {% endblock %}
+        <div class="ui vertically divided grid">
+            <div class="row"></div>
+            <div class="row">
+                <div id="content" class="column">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+            <div id="footer" class="row">
+                <div class="column"><p>&copy; Copyright 2014</p></div>
+            </div>
         </div>
     </body>
+    <script src="{{ asset('scripts/semantic.min.js') }}"></script>
 </html>

@@ -10,13 +10,10 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array('twig.path' => BA
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\FormServiceProvider());
 $app->register(new Silex\Provider\TranslationServiceProvider());
+$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
-$app['debug'] = true;
-
-$app['controllers.index'] = $app->share(function() use ($app){
-	return new FreightCostCalculator\Controllers\IndexController();	
-});
-
-$app->get('/', 'controllers.index:indexAction');
+include __DIR__.'/../app/config.php';
+include __DIR__.'/../app/routes.php';
+include __DIR__.'/../app/services.php';
 
 $app->run();

@@ -4,8 +4,19 @@
 
 {% block content %}
 
-<form>
-	{{ form_widget(form) }}
-</form>
+<div class="ui five column grid">
+    <div class="column">
+        <div class="ui fluid form segment">
+            <form>
+                <h3 class="ui header">Calc</h3>
+                <div class="field">
+                    {{ form_row(form.postcode) }}
+                </div>
+                <div class="ui blue submit button">Submit</div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}
