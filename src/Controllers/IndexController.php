@@ -19,7 +19,7 @@ class IndexController
 		));
 	}
 
-	public function calcFreightCostAjaxAction(Request $request)
+	public function calcFreightCostAjaxAction(Application $app, Request $request)
 	{
 		$response = array('status' => 200);
 
@@ -27,13 +27,10 @@ class IndexController
 
 		if(!$postcode){
 			$response['status'] = 500;
-			$response['error'] = 'Invalid postcode';
+			$response['error'] = $app['translator']->trans('error.invalid.postcode');
 			return new JsonResponse($response);
 		}
 
-		$response['status'] = 500;
-			$response['error'] = 'Invalid postcode';
-		
 		return new JsonResponse($response);
 	}
 }

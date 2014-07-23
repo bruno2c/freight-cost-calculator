@@ -8,11 +8,25 @@
     <div class="column">
         <div class="ui fluid form segment">
             <form>
-                <h3 class="ui header">Calc</h3>
+                <h3 class="ui header">{{ "title.freight.cost.calculator"|trans }}</h3>
+
                 <div class="field">
                     {{ form_row(form.postcode) }}
                 </div>
-                <input type="submit" class="ui blue submit button" value="Submit"/>
+
+                <div class="field">
+                    {{ form_row(form.weight) }}
+                </div>
+
+                <div class="field">
+                    {{ form_row(form.volume) }}
+                </div>
+
+                <div class="field">
+                    {{ form_row(form.target_date) }}
+                </div>
+
+                <input type="submit" class="ui blue submit button" value="{{ "submit"|trans }}"/>
             </form>
         </div>
     </div>
@@ -21,14 +35,14 @@
 <div id="alert-modal" class="ui small modal">
   <i class="close icon"></i>
   <div class="header">
-    Attention
+    {{ "title.attention"|trans }}
   </div>
   <div class="content">
 	
   </div>
   <div class="actions">
     <div class="ui button">
-      Close
+      {{ "close"|trans }}
     </div>
   </div>
 </div>
@@ -42,7 +56,9 @@
 			$('.submit').click(function(e){
 				e.preventDefault();
 
-				validate();
+                if (!validate()) {
+                    return;
+                }
 
 				var postcode = $('#calc_form_type_postcode').val();
 
@@ -59,13 +75,49 @@
 					}
 				});
 			});
+
+            $('input').keyup(function(){
+                $(this).parents('.field').removeClass('error');
+            });
 		});
 
 		function validate()
 		{
-			if($('#calc_form_type_postcode').val() == undefined || $('#calc_form_type_postcode').val().lenght == 0){
-				showAlert('Postcode is empty');
+            var postcode = $('#calc_form_type_postcode');
+            var weight = $('#calc_form_type_weight');
+            var volume = $('#calc_form_type_volume');
+            var targetDate = $('#calc_form_type_target_date');
+            var error = false;
+
+			if(postcode.val() == undefined || postcode.val().length == 0){
+                postcode.parents('.field').addClass('error');
+                postcode.attr('placeholder', "{{ 'error.field.empty'|trans }}");
+                error = true;
 			}
+
+            if(weight.val() == undefined || weight.val().length == 0){
+                weight.parents('.field').addClass('error');
+                weight.attr('placeholder', "{{ 'error.field.empty'|trans }}");
+                error = true;
+            }
+
+            if(volume.val() == undefined || volume.val().length == 0){
+                volume.parents('.field').addClass('error');
+                volume.attr('placeholder', "{{ 'error.field.empty'|trans }}");
+                error = true;
+            }
+
+            if(targetDate.val() == undefined || targetDate.val().length == 0){
+                targetDate.parents('.field').addClass('error');
+                targetDate.attr('placeholder', "{{ 'error.field.empty'|trans }}");
+                error = true;
+            }
+
+            if (error) {
+                return false;
+            }
+
+            return true;
 		}
 
 		function showAlert(message)
