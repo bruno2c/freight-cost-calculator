@@ -4,8 +4,169 @@
 
 {% block content %}
 
-<form>
-	{{ form_widget(form) }}
-</form>
+<div class="ui grid">
+    <div class="four wide column"></div>
+    <div class="three wide column">
+        <div class="ui fluid form segment">
+            <form>
+                <h3 class="ui header">{{ "calc"|trans }}</h3>
 
+                <div class="field">
+                    {{ form_row(form.postcode) }}
+                    <div class="ui red pointing above ui label hide"></div>
+                </div>
+
+                <div class="field">
+                    {{ form_row(form.weight) }}
+                    <div class="ui red pointing above ui label hide"></div>
+                </div>
+
+                <div class="field">
+                    {{ form_row(form.volume) }}
+                    <div class="ui red pointing above ui label hide"></div>
+                </div>
+
+                <div class="field">
+                    {{ form_row(form.target_date) }}
+                    <div class="ui red pointing above ui label hide"></div>
+                </div>
+
+                <input type="submit" class="ui green submit button" value="{{ "submit"|trans }}"/>
+            </form>
+        </div>
+    </div>
+    <div class="six wide column">
+        <div class="ui segment">
+            <div class="ui header">{{ "text.welcome"|trans }}</div>
+            <div>
+                {{ "text.description"|trans }}
+
+                <ul class="topic-list">
+                    <li><span class="bold">{{ "postcode"|trans }}</span></li>
+                    <li class="no-list-style">{{ "postcode.description"|trans }}</li>
+
+                    <li><span class="bold">{{ "weight"|trans }}</span></li>
+                    <li class="no-list-style">{{ "weight.description"|trans }}</li>
+
+                    <li><span class="bold">{{ "volume"|trans }}</span></li>
+                    <li class="no-list-style">{{ "volume.description"|trans }}</li>
+
+                    <li><span class="bold">{{ "target.date"|trans }} {{ "optional"|trans }}</span></li>
+                    <li class="no-list-style">{{ "target.date.description"|trans }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alert-modal" class="ui small modal">
+  <i class="close icon"></i>
+  <div class="header">
+    {{ "title.attention"|trans }}
+  </div>
+  <div class="content">
+	
+  </div>
+  <div class="actions">
+    <div class="ui button">
+      {{ "close"|trans }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('scripts/jquery.price_format.2.0.min.js') }}"></script>
+    <script src="{{ asset('scripts/jquery.maskedinput.min.js') }}"></script>
+    <script src="{{ asset('scripts/masks.js') }}"></script>
+    <script src="{{ asset('scripts/moment.js') }}"></script>
+	<script>
+		$(document).ready(function(){
+
+			$('.submit').click(function(e){
+				e.preventDefault();
+
+                if (!validate()) {
+                    return;
+                }
+
+				var postcode = $('#calc_form_type_postcode').val();
+
+				$.ajax({
+					type: 'POST',
+					url: "{{ url('IndexController:calcFreightCostAjaxAction') }}",
+					data: {
+						postcode: postcode
+					},
+					success: function(data){
+						if(data.status == 500){
+							showAlert(data.error);
+						}
+					}
+				});
+			});
+
+            $('input').keyup(function(){
+                var parent = $(this).parents('.field');
+                parent.removeClass('error');
+                parent.find('.pointing').empty().addClass('hide');
+            });
+		});
+
+		function validate()
+		{
+            var postcode = $('#calc_form_type_postcode');
+            var weight = $('#calc_form_type_weight');
+            var volume = $('#calc_form_type_volume');
+            var targetDate = $('#calc_form_type_target_date');
+            var error = false;
+
+			if(postcode.val() == undefined || postcode.val().length == 0){
+                addError(postcode.parents('.field'), "{{ 'error.field.empty'|trans }}");
+                error = true;
+			}
+
+            if(weight.val() == undefined || weight.val().length == 0){
+                addError(weight.parents('.field'), "{{ 'error.field.empty'|trans }}");
+                error = true;
+            }
+
+            if(volume.val() == undefined || volume.val().length == 0){
+                addError(volume.parents('.field'), "{{ 'error.field.empty'|trans }}");
+                error = true;
+            }
+
+            if(!moment(targetDate.val(), 'DD-MM-YYYY').isValid()){
+                addError(targetDate.parents('.field'), "{{ 'error.field.invalid.value'|trans }}");
+                error = true;
+            }
+
+            if(targetDate.val() == undefined || targetDate.val().length == 0){
+                addError(targetDate.parents('.field'), "{{ 'error.field.empty'|trans }}");
+                error = true;
+            }
+
+            if (error) {
+                return false;
+            }
+
+            return true;
+		}
+
+        function addError(fieldElement, message)
+        {
+            fieldElement.addClass('error');
+            fieldElement.find('.pointing').removeClass('hide').empty().html(message);
+
+            return true;
+        }
+
+		function showAlert(message)
+		{
+			var modal = $('#alert-modal');
+			modal.find('.content').empty().html('<p>'+message+'</p>');
+			modal.modal('show');
+		}
+	</script>
 {% endblock %}
