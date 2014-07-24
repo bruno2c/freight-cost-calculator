@@ -6,7 +6,7 @@
         {% endblock %}
 
         <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'>
-        <link rel="stylesheet" type="text/css" href="{{ asset('styles/style.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('styles/default.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('styles/semantic.min.css') }}">
 
         {% block stylesheets %}
@@ -15,19 +15,30 @@
     </head>
     <body>
         <div class="ui vertically divided grid">
-            <div class="row"></div>
+            <div class="row">
+                <div class="no-padding-left no-padding-right column">
+                    <div class="ui borderless no-radius fluid inverted menu">
+                        <a class="item">
+                            <i class="home icon"></i> Home
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div id="content" class="column">
                     {% block content %}{% endblock %}
                 </div>
             </div>
             <div id="footer" class="row">
-                <div class="column"><p>&copy; Copyright 2014</p></div>
+                <div class="center aligned column">
+                    <p>Bruno Cardenas - &copy; Copyright 2014</p>
+                </div>
             </div>
         </div>
     </body>
     <script src="{{ asset('scripts/jquery-2.1.1.min.js') }}"></script>
     <script src="{{ asset('scripts/semantic.min.js') }}"></script>
+    <script src="{{ asset('scripts/default.js') }}"></script>
     {% block scripts %}
 
     {% endblock %}
