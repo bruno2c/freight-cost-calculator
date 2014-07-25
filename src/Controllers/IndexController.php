@@ -31,6 +31,9 @@ class IndexController
 			return new JsonResponse($response);
 		}
 
+		$calculator = new \FreightCostCalculator\Core\Calculator\Calculator(array('postcode' => $postcode));
+		$response['result'] = $calculator->calc();
+
 		return new JsonResponse($response);
 	}
 }
