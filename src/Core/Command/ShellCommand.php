@@ -2,6 +2,8 @@
 
 namespace FreightCostCalculator\Core\Command;
 
+use Silex\Application;
+
 class ShellCommand implements ExecutableInterface
 {
     /**
@@ -10,6 +12,7 @@ class ShellCommand implements ExecutableInterface
     protected $command;
     protected $output = array();
     protected $resultCode;
+    protected $debug = false;
 
     /**
      * @param CommandInterface $command
@@ -21,7 +24,12 @@ class ShellCommand implements ExecutableInterface
 
     public function execute()
     {
-        exec($this->command->getToExecute(), &$this->output);
+        exec($this->command->getToExecute(), $this->output, $this->resultCode);
+    }
+
+    public function executeScript(Application $app)
+    {
+        exec($app['config.resources.scripts.dir'] . $this->command->getScriptToExecute(), $this->output, $this->resultCode);
     }
 
     public function getOutput()
@@ -36,9 +44,19 @@ class ShellCommand implements ExecutableInterface
 
     public function getResult()
     {
-        return array(
-            'output' => $this->getOutput(),
-            'result_code' => $this->getResultCode(),
-        );
+        $result['output'] = $this->getOutput();
+        $result['result_code'] = $this->getResultCode();
+
+        if ($this->debug == true) {
+            $result['command'] = $this->command->getToExecute();
+            $result['script'] = $this->command->getScriptToExecute();
+        }
+
+        return $result;
     }
-} 
+
+    public function setDebug($debug)
+    {
+        $this->debug = (bool) $debug;
+    }
+}
