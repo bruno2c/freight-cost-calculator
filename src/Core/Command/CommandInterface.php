@@ -17,6 +17,6 @@ interface CommandInterface
     function getParamDelimiter();
 
     function getToExecute();
-    
+
     function getScriptToExecute();
 }

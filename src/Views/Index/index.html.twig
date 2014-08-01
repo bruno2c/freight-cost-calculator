@@ -82,6 +82,8 @@
     <script src="{{ asset('scripts/masks.js') }}"></script>
     <script src="{{ asset('scripts/moment.js') }}"></script>
 	<script>
+        var timeoutId = null;
+
 		$(document).ready(function(){
 
 			$('.submit').click(function(e){
@@ -92,6 +94,9 @@
                 }
 
 				var postcode = $('#calc_form_type_postcode').val();
+
+                $.when(
+                getRuntimeProgress(true),
 
 				$.ajax({
 					type: 'POST',
@@ -104,7 +109,11 @@
 							showAlert(data.error);
 						}
 					}
-				});
+				})
+
+                ).then(function() {
+                    stopProgressBar();
+                });
 			});
 
             $('input').keyup(function(){
@@ -168,5 +177,32 @@
 			modal.find('.content').empty().html('<p>'+message+'</p>');
 			modal.modal('show');
 		}
+
+        function getRuntimeProgress(startLoop)
+        {
+            $.ajax({
+                type: 'GET',
+                url: "{{ url('IndexController:getRunTimeProcessOutputAjaxAction') }}",
+                success: function(data){
+                    if(data.status == 500){
+                        showAlert(data.error);
+                    }
+                }
+            });
+
+            if(startLoop == true){
+                startProgressBar();
+            }
+        }
+
+        function startProgressBar()
+        {
+            timeoutId = setTimeout(getRuntimeProgress, 1000, true);
+        }
+
+        function stopProgressBar()
+        {
+            clearTimeout(timeoutId);
+        }
 	</script>
 {% endblock %}

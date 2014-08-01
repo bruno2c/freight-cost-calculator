@@ -11,6 +11,7 @@ $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\FormServiceProvider());
 $app->register(new Silex\Provider\TranslationServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+$app->register(new Silex\Provider\SessionServiceProvider());
 
 include __DIR__.'/../app/config.php';
 include __DIR__.'/../app/routes.php';

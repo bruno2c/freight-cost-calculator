@@ -3,7 +3,7 @@
 namespace FreightCostCalculator\Core\Calculator;
 
 use Silex\Application;
-use FreightCostCalculator\Core\Command\ShellCommand;
+use FreightCostCalculator\Core\Command\Process;
 use FreightCostCalculator\Core\Command\Jobs\Pig;
 
 class Calculator
@@ -31,15 +31,13 @@ class Calculator
 
 	public function calc()
 	{
-		ini_set('max_execution_time', 0);
-
 		$pigJob = new Pig();
 		$pigJob->addParam('param_file', $this->app['config.resources.scripts.dir'] . 'freightCostCalc-Params.pig');
 		$pigJob->setParamComplement($this->app['config.resources.scripts.dir'] . 'freightCostCalc.pig');
 
-		$command = new ShellCommand($pigJob);
-		$command->executeScript($this->app);
+		$process = new Process($pigJob);
+		$process->executeScript($this->app);
 
-		return $command->getResult();
+		return $process->getRunningProcess();
 	}
 }
