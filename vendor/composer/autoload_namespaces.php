@@ -13,6 +13,7 @@ return array(
     'Symfony\\Component\\Security\\Core\\' => array($vendorDir . '/symfony/security-core'),
     'Symfony\\Component\\Routing\\' => array($vendorDir . '/symfony/routing'),
     'Symfony\\Component\\PropertyAccess\\' => array($vendorDir . '/symfony/property-access'),
+    'Symfony\\Component\\Process\\' => array($vendorDir . '/symfony/process'),
     'Symfony\\Component\\OptionsResolver\\' => array($vendorDir . '/symfony/options-resolver'),
     'Symfony\\Component\\Locale\\' => array($vendorDir . '/symfony/locale'),
     'Symfony\\Component\\Intl\\' => array($vendorDir . '/symfony/intl'),
@@ -27,5 +28,7 @@ return array(
     'Symfony\\Bridge\\Twig\\' => array($vendorDir . '/symfony/twig-bridge'),
     'Silex' => array($vendorDir . '/silex/silex/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
+    'Predis\\Silex\\' => array($vendorDir . '/predis/service-provider/lib'),
+    'Predis' => array($vendorDir . '/predis/predis/lib'),
     'Pimple' => array($vendorDir . '/pimple/pimple/lib'),
 );

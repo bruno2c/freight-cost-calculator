@@ -1,1 +1,4 @@
 .idea*
+src/Resources/scripts/freightCostCalc-Params.pig
+src/Resources/scripts/freightCostCalc.pig
+src/Resources/scripts/run_pig_job.sh

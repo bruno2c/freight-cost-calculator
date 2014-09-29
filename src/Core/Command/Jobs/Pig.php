@@ -8,29 +8,69 @@ class Pig implements CommandInterface
 {
     protected $command;
     protected $params = array();
+    protected $paramDelimiter = '-';
+    protected $paramComplement;
 
-    function setCommand($command)
+    public function setCommand($command)
     {
         $this->command = $command;
     }
 
-    function getCommand()
+    public function getCommand()
     {
         return $this->command;
     }
 
-    function addParam($name, $value)
+    public function addParam($name, $value)
     {
         $this->params[$name] = $value;
     }
 
-    function getParams($name = null)
+    public function getParams($name = null)
     {
         return $name ? $this->params[$name] : $this->params;
     }
 
-    function getToExecute()
+    public function setParamDelimiter($paramDelimiter)
     {
-        return sprintf('pig');
+        $this->paramDelimiter = $paramDelimiter;
+    }
+
+    public function getParamDelimiter()
+    {
+        return $this->paramDelimiter;
+    }
+
+    public function getParamsAsString()
+    {
+        $params = null;
+
+        foreach ($this->params as $key => $value) {
+            $params .= $this->getParamDelimiter() . $key;
+            $params .= $value ? ' ' . $value : null;
+            $params .= ' ';
+        }
+
+        return $params;
+    }
+
+    public function setParamComplement($complement)
+    {
+        $this->paramComplement = $complement;
+    }
+
+    public function getParamComplement()
+    {
+        return $this->paramComplement;
+    }
+
+    public function getToExecute()
+    {
+        return sprintf('pig %s %s', $this->getParamsAsString(), $this->getParamComplement());
+    }
+
+    public function getScriptToExecute()
+    {
+        return sprintf('run_pig_job.sh %s %s', $this->getParamsAsString(), $this->getParamComplement());
     }
 }

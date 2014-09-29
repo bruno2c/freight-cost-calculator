@@ -12,5 +12,11 @@ interface CommandInterface
 
     function getParams($name = null);
 
+    function setParamDelimiter($paramDelimiter);
+
+    function getParamDelimiter();
+
     function getToExecute();
-} 
+
+    function getScriptToExecute();
+}
