@@ -95,8 +95,7 @@
 
 				var postcode = $('#calc_form_type_postcode').val();
 
-                $.when(
-                getRuntimeProgress(true),
+                //$.when(
 
 				$.ajax({
 					type: 'POST',
@@ -108,12 +107,14 @@
 						if(data.status == 500){
 							showAlert(data.error);
 						}
-					}
-				})
 
-                ).then(function() {
-                    stopProgressBar();
-                });
+                        getRuntimeProgress(data.job_id, true);
+					}
+				});
+
+                //).then(function() {
+                    //stopProgressBar();
+                //});
 			});
 
             $('input').keyup(function(){
@@ -178,26 +179,30 @@
 			modal.modal('show');
 		}
 
-        function getRuntimeProgress(startLoop)
+        function getRuntimeProgress(jobId, startLoop)
         {
             $.ajax({
                 type: 'GET',
                 url: "{{ url('IndexController:getRunTimeProcessOutputAjaxAction') }}",
+                data: {
+                    "job": jobId
+                },
                 success: function(data){
                     if(data.status == 500){
                         showAlert(data.error);
+                        stopProgressBar();
                     }
                 }
             });
 
             if(startLoop == true){
-                startProgressBar();
+                startProgressBar(jobId);
             }
         }
 
-        function startProgressBar()
+        function startProgressBar(jobId)
         {
-            timeoutId = setTimeout(getRuntimeProgress, 1000, true);
+            timeoutId = setTimeout(getRuntimeProgress, 1000, jobId, true);
         }
 
         function stopProgressBar()

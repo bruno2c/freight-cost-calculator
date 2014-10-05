@@ -38,6 +38,6 @@ class Calculator
 		$process = new Process($pigJob);
 		$process->executeScript($this->app);
 
-		return $process->getRunningProcess();
+		return $process->getProcess();
 	}
 }

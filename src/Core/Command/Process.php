@@ -37,10 +37,12 @@ class Process implements ExecutableInterface
     {
         $process = new SymfonyProcess($app['config.resources.scripts.dir'] . $this->command->getScriptToExecute());
         $process->start();
+        $jobId = $app['predis']->get('job_id');
 
+        $i = 0;
         while ($process->isRunning()) {
-            $app['session']->set('process.output', $process->getIncrementalOutput());
-            $app['session']->set('process.error.output', $process->getIncrementalErrorOutput());
+            $app['predis']->set(sprintf('%s:process:output', $jobId),  $process->getOutput());
+            $app['predis']->set(sprintf('%s:process:error:output', $jobId),  $process->getErrorOutput());
         }
 
 		$this->process = $process;

@@ -6,12 +6,12 @@ register /usr/local/pig/build/ivy/lib/Pig/joda-time-2.1.jar
 
 -- prepare the environment
 define AvroStorage org.apache.pig.piggybank.storage.avro.AvroStorage();
-rmf work/scriptResults.avro
-rmf work/scriptResults
+rmf /user/hduser/work/scriptResults.avro
+rmf /user/hduser/work/scriptResults
 
 -- begin script
-rawCarriers = LOAD 'work/carriers.avro' USING AvroStorage();
-rawFreightCost = LOAD 'work/freightCost.avro' USING AvroStorage();
+rawCarriers = LOAD '/user/hduser/work/carriers.avro' USING AvroStorage();
+rawFreightCost = LOAD '/user/hduser/work/freightCost.avro' USING AvroStorage();
 
 freightCost = JOIN rawFreightCost BY carrier_id, rawCarriers BY id;
 freightCost = FILTER freightCost BY (start_cep <= '$targetPostcode') AND (final_cep >= '$targetPostcode');
@@ -25,7 +25,7 @@ freightCostResult = FOREACH freightCost
 		rawFreightCost::base_freight_cost AS base_freight_cost, 
 		rawFreightCost::delivery_time AS delivery_time;
 
-STORE freightCostResult INTO 'work/scriptResults.avro' USING AvroStorage('{
+STORE freightCostResult INTO '/user/hduser/work/scriptResults.avro' USING AvroStorage('{
 	"namespace": "freightcost.result",
 	"type": "record",
 	"name": "FreightCost",
@@ -37,4 +37,4 @@ STORE freightCostResult INTO 'work/scriptResults.avro' USING AvroStorage('{
 	]
 }');
 
-STORE freightCostResult INTO 'work/scriptResults';
+STORE freightCostResult INTO '/user/hduserwork/scriptResults';
