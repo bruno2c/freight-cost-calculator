@@ -10,8 +10,8 @@ rmf /user/hduser/work/scriptResults.avro
 rmf /user/hduser/work/scriptResults
 
 -- begin script
-rawCarriers = LOAD '/user/hduser/work/carriers.avro' USING AvroStorage();
-rawFreightCost = LOAD '/user/hduser/work/freightCost.avro' USING AvroStorage();
+rawCarriers = LOAD '/user/hduser/work/test1/carriers.avro' USING AvroStorage();
+rawFreightCost = LOAD '/user/hduser/work/test1/freightCost.avro' USING AvroStorage();
 
 freightCost = JOIN rawFreightCost BY carrier_id, rawCarriers BY id;
 freightCost = FILTER freightCost BY (start_cep <= '$targetPostcode') AND (final_cep >= '$targetPostcode');
@@ -37,4 +37,4 @@ STORE freightCostResult INTO '/user/hduser/work/scriptResults.avro' USING AvroSt
 	]
 }');
 
-STORE freightCostResult INTO '/user/hduserwork/scriptResults';
+STORE freightCostResult INTO '/user/hduser/work/scriptResults';

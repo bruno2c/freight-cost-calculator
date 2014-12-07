@@ -15,7 +15,7 @@ class TokenHelper
 		return $returnString;
 	}
 
-	protected function getRandomElement()
+	public static function getRandomElement()
 	{
 		$elements = range('a','z') + range('0','9');
 

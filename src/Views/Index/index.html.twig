@@ -95,8 +95,6 @@
 
 				var postcode = $('#calc_form_type_postcode').val();
 
-                //$.when(
-
 				$.ajax({
 					type: 'POST',
 					url: "{{ url('IndexController:calcFreightCostAjaxAction') }}",
@@ -107,14 +105,10 @@
 						if(data.status == 500){
 							showAlert(data.error);
 						}
-
-                        getRuntimeProgress(data.job_id, true);
 					}
 				});
 
-                //).then(function() {
-                    //stopProgressBar();
-                //});
+                setTimeout(getRuntimeProgress, 5000, '', true);
 			});
 
             $('input').keyup(function(){
@@ -188,9 +182,22 @@
                     "job": jobId
                 },
                 success: function(data){
+                    if (data.finished_at != '' && data.finished_at != undefined) {
+                        var progress = '<div class="ui successful progress"><div class="bar" style="width: ' + data.output + ';"></div></div>';
+                        showAlert(progress);
+                        stopProgressBar();
+                        return true;
+                    }
+
                     if(data.status == 500){
                         showAlert(data.error);
                         stopProgressBar();
+                        return false;
+                    }
+
+                    if (data.output != '' && data.output != undefined) {
+                        var progress = '<div class="ui progress"><span style="float:left; margin-bottom: 2%;">' + data.output + '</span><div class="bar" style="width: ' + data.output + ';"></div></div>';
+                        showAlert(progress);
                     }
                 }
             });
@@ -202,7 +209,7 @@
 
         function startProgressBar(jobId)
         {
-            timeoutId = setTimeout(getRuntimeProgress, 1000, jobId, true);
+            timeoutId = setTimeout(getRuntimeProgress, 10000, jobId, true);
         }
 
         function stopProgressBar()

@@ -22,11 +22,7 @@ class IndexController
 
 	public function calcFreightCostAjaxAction(Application $app, Request $request)
 	{
-		//$app['session']->set('process.output', null);
-        //$app['session']->set('process.error.output', null);
-
         $app['predis']->set('job_id', TokenHelper::generate());
-
 		$response = array('status' => 200);
 
 		$postcode = $request->get('postcode');
@@ -47,14 +43,27 @@ class IndexController
 	public function getRunTimeProcessOutputAjaxAction(Application $app, Request $request)
 	{
 		$response = array('status' => 200);
-		$jobId = $request->get('job');
+		$jobId = $app['predis']->get('job_id');
 
-		$response['output'] = $app['predis']->get(sprintf('%s:process:output', $jobId));
+		$processOutput = $app['predis']->get(sprintf('%s:process:error:output', $jobId));
+		preg_match_all('#INFO  org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceLauncher - (.* ?) complete#', $processOutput, $processOutput);
+
+		if (count($processOutput) > 0) {
+			$response['output'] = array_pop($processOutput);
+
+			if (count($response['output']) > 0) {
+				$response['output'] = array_pop($response['output']);
+			}
+		}
+
+		$response['finished_at'] = $app['predis']->get(sprintf('%s:process:finished_at', $jobId));
+
 		$processErrorOutput = $app['predis']->get(sprintf('%s:process:error:output', $jobId));
+		preg_match('#ERROR org.apache.pig.tools.grunt.Grunt - (.* ?)#', $processErrorOutput, $processErrorOutput);
 
-		if (strlen($processErrorOutput) > 0) {
+		if (count($processErrorOutput) > 0) {
 			$response['status'] = 500;
-			preg_match('#ERROR org.apache.pig.tools.grunt.Grunt - (.* ?)#', $processErrorOutput, $response['error']);
+			$response['error'] = $processErrorOutput[0];
 		}
 
         return new JsonResponse($response);
