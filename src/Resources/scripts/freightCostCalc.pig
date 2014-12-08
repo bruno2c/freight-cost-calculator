@@ -10,18 +10,18 @@ rmf /user/hduser/work/scriptResults.avro
 rmf /user/hduser/work/scriptResults
 
 -- begin script
-rawCarriers = LOAD '/user/hduser/work/test1/carriers.avro' USING AvroStorage();
-rawFreightCost = LOAD '/user/hduser/work/test1/freightCost.avro' USING AvroStorage();
+rawCarriers = LOAD '/user/hduser/work/test3/carriers.avro' USING AvroStorage();
+rawFreightCost = LOAD '/user/hduser/work/test3/freightCost.avro' USING AvroStorage();
 
 freightCost = JOIN rawFreightCost BY carrier_id, rawCarriers BY id;
 freightCost = FILTER freightCost BY (start_cep <= '$targetPostcode') AND (final_cep >= '$targetPostcode');
 freightCost = ORDER freightCost BY base_freight_cost ASC;
-freightCost = LIMIT freightCost 3;
+freightCost = LIMIT freightCost 1;
 
 freightCostResult = FOREACH freightCost 
 	GENERATE 
 		rawFreightCost::id AS id, 
-		rawFreightCost::carrier_id AS carrier_id, 
+		rawCarriers::name AS carrier_name, 
 		rawFreightCost::base_freight_cost AS base_freight_cost, 
 		rawFreightCost::delivery_time AS delivery_time;
 
@@ -31,7 +31,7 @@ STORE freightCostResult INTO '/user/hduser/work/scriptResults.avro' USING AvroSt
 	"name": "FreightCost",
 	"fields": [
 		{ "name": "id", "type": "int" },
-		{ "name": "carrier_id", "type": "int" }, 
+		{ "name": "carrier_name", "type": "string" }, 
 		{ "name": "base_freight_cost", "type": ["float", "null"] }, 
 		{ "name": "delivery_time", "type": "int" }		
 	]

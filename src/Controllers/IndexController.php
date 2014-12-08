@@ -66,6 +66,25 @@ class IndexController
 			$response['error'] = $processErrorOutput[0];
 		}
 
+		if (!empty($response['finished_at'])) {
+			$resultFile = __DIR__ . '/../../web/scriptResults/results.txt';
+			$finalResultFile = __DIR__ . '/../../web/scriptResults/results_' . date('Y-m-d_H_i_s', strtotime($response['finished_at'])) . '.txt';
+
+			if (file_exists($resultFile)) {
+				$result = trim(str_replace('\n', '', file_get_contents($resultFile)));
+				$data = explode('	', $result);
+
+				$response['result'] = array(
+					'id' 			=> isset($data[0]) ? $data[0] : '',
+					'carrier_name' 	=> isset($data[1]) ? $data[1] : '',
+					'cost' 			=> isset($data[2]) ? $data[2] : '',
+					'delivery_time' => isset($data[3]) ? $data[3] : '',
+				);
+
+				rename($resultFile, $finalResultFile);
+			}
+		}
+
         return new JsonResponse($response);
 	}
 }

@@ -169,7 +169,7 @@
 		function showAlert(message)
 		{
 			var modal = $('#alert-modal');
-			modal.find('.content').empty().html('<p>'+message+'</p>');
+			modal.find('.content').empty().html(message);
 			modal.modal('show');
 		}
 
@@ -182,8 +182,20 @@
                     "job": jobId
                 },
                 success: function(data){
+                    var progress = '';
+
                     if (data.finished_at != '' && data.finished_at != undefined) {
-                        var progress = '<div class="ui successful progress"><div class="bar" style="width: ' + data.output + ';"></div></div>';
+                        progress += '<p><b>' + data.output + '</b></p>';
+                        progress += '<div class="ui successful progress"><div class="bar" style="width: ' + data.output + ';"></div></div>';
+
+                        if (data.result.carrier_name != '') {
+                            progress += '<p><b>Transportadora:</b> ' + data.result.carrier_name + '</p>';
+                            progress += '<p><b>Tempo de entrega:</b> ' + data.result.delivery_time + ' dia(s)</p>';
+                            progress += '<p><b>Custo:</b> R$' + data.result.cost + '</p>';
+                        } else {
+                            progress += '<p>Nenhuma transportadora atende esta região</p>';
+                        }
+
                         showAlert(progress);
                         stopProgressBar();
                         return true;
@@ -196,9 +208,17 @@
                     }
 
                     if (data.output != '' && data.output != undefined) {
-                        var progress = '<div class="ui progress"><span style="float:left; margin-bottom: 2%;">' + data.output + '</span><div class="bar" style="width: ' + data.output + ';"></div></div>';
+                        progress += '<p><b>' + data.output + '</b></p>';
+                        progress += '<div class="ui progress"><div class="bar" style="width: ' + data.output + ';"></div></div>';
+
                         showAlert(progress);
+                        return true;
                     }
+
+                    progress += '<p><b>0%</b></p>';
+                    progress += '<div class="ui progress"><div class="bar" style="width: 0;"></div></div>';
+
+                    showAlert(progress);
                 }
             });
 
