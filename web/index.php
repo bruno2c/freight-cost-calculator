@@ -9,7 +9,9 @@ $app = new Silex\Application();
 $app->register(new Silex\Provider\TwigServiceProvider(), array('twig.path' => BASE_DIR.'src/Views'));
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\FormServiceProvider());
-$app->register(new Silex\Provider\TranslationServiceProvider());
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+    'locale_fallbacks' => array('pt-br'),
+));
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Predis\Silex\PredisServiceProvider(), array(

@@ -33,6 +33,7 @@ class Calculator
 	{
 		$params = '';
 		$params .= sprintf("targetPostcode = \"%s\"\n", $this->postcode);
+		#$params .= sprintf("weight = \"%s\";\n", $this->weight);
 
 		file_put_contents($this->app['config.resources.scripts.dir'] . 'freightCostCalc-Params.pig', $params);
 

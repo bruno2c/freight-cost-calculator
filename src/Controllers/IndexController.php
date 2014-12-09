@@ -26,6 +26,7 @@ class IndexController
 		$response = array('status' => 200);
 
 		$postcode = $request->get('postcode');
+		$weight = $request->get('weight');
 
 		if(!$postcode){
 			$response['status'] = 500;
@@ -33,7 +34,7 @@ class IndexController
 			return new JsonResponse($response);
 		}
 
-		$calculator = new \FreightCostCalculator\Core\Calculator\Calculator($app, array('postcode' => $postcode));
+		$calculator = new \FreightCostCalculator\Core\Calculator\Calculator($app, array('postcode' => $postcode, 'weight' => $weight));
 		$response['result'] = $calculator->calc();
 		$response['job_id'] = $app['predis']->get('job_id');
 

@@ -62,7 +62,7 @@
 <div id="alert-modal" class="ui small modal">
   <i class="close icon"></i>
   <div class="header">
-    {{ "title.attention"|trans }}
+    {{ "title.processing"|trans }}
   </div>
   <div class="content">
 	
@@ -94,12 +94,14 @@
                 }
 
 				var postcode = $('#calc_form_type_postcode').val();
+                var weight = $('#calc_form_type_weight').val();
 
 				$.ajax({
 					type: 'POST',
 					url: "{{ url('IndexController:calcFreightCostAjaxAction') }}",
 					data: {
-						postcode: postcode
+						postcode: postcode,
+                        weight: weight
 					},
 					success: function(data){
 						if(data.status == 500){
