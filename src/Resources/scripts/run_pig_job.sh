@@ -14,3 +14,4 @@ export PIG_HOME=/usr/local/pig
 export PATH=$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin:$SQOOP_HOME/bin:$PIG_HOME/bin
 
 pig "$@"
+hadoop fs -copyToLocal hdfs://localhost:9000/user/hduser/work/scriptResults/part-m-00000 /var/www/freight-cost-calculator/web/scriptResults/results.txt

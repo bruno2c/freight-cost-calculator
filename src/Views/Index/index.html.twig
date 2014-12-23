@@ -62,7 +62,7 @@
 <div id="alert-modal" class="ui small modal">
   <i class="close icon"></i>
   <div class="header">
-    {{ "title.attention"|trans }}
+    {{ "title.processing"|trans }}
   </div>
   <div class="content">
 	
@@ -94,26 +94,23 @@
                 }
 
 				var postcode = $('#calc_form_type_postcode').val();
-
-                $.when(
-                getRuntimeProgress(true),
+                var weight = $('#calc_form_type_weight').val();
 
 				$.ajax({
 					type: 'POST',
 					url: "{{ url('IndexController:calcFreightCostAjaxAction') }}",
 					data: {
-						postcode: postcode
+						postcode: postcode,
+                        weight: weight
 					},
 					success: function(data){
 						if(data.status == 500){
 							showAlert(data.error);
 						}
 					}
-				})
+				});
 
-                ).then(function() {
-                    stopProgressBar();
-                });
+                setTimeout(getRuntimeProgress, 5000, '', true);
 			});
 
             $('input').keyup(function(){
@@ -170,30 +167,67 @@
 		function showAlert(message)
 		{
 			var modal = $('#alert-modal');
-			modal.find('.content').empty().html('<p>'+message+'</p>');
+			modal.find('.content').empty().html(message);
 			modal.modal('show');
 		}
 
-        function getRuntimeProgress(startLoop)
+        function getRuntimeProgress(jobId, startLoop)
         {
             $.ajax({
                 type: 'GET',
                 url: "{{ url('IndexController:getRunTimeProcessOutputAjaxAction') }}",
+                data: {
+                    "job": jobId
+                },
                 success: function(data){
+                    var progress = '';
+
+                    if (data.finished_at != '' && data.finished_at != undefined) {
+                        progress += '<p><b>' + data.output + '</b></p>';
+                        progress += '<div class="ui successful progress"><div class="bar" style="width: ' + data.output + ';"></div></div>';
+
+                        if (data.result.carrier_name != '') {
+                            progress += '<p><b>Transportadora:</b> ' + data.result.carrier_name + '</p>';
+                            progress += '<p><b>Tempo de entrega:</b> ' + data.result.delivery_time + ' dia(s)</p>';
+                            progress += '<p><b>Custo:</b> R$' + data.result.cost + '</p>';
+                        } else {
+                            progress += '<p>Nenhuma transportadora atende esta região</p>';
+                        }
+
+                        showAlert(progress);
+                        stopProgressBar();
+                        return true;
+                    }
+
                     if(data.status == 500){
                         showAlert(data.error);
+                        stopProgressBar();
+                        return false;
                     }
+
+                    if (data.output != '' && data.output != undefined) {
+                        progress += '<p><b>' + data.output + '</b></p>';
+                        progress += '<div class="ui progress"><div class="bar" style="width: ' + data.output + ';"></div></div>';
+
+                        showAlert(progress);
+                        return true;
+                    }
+
+                    progress += '<p><b>0%</b></p>';
+                    progress += '<div class="ui progress"><div class="bar" style="width: 0;"></div></div>';
+
+                    showAlert(progress);
                 }
             });
 
             if(startLoop == true){
-                startProgressBar();
+                startProgressBar(jobId);
             }
         }
 
-        function startProgressBar()
+        function startProgressBar(jobId)
         {
-            timeoutId = setTimeout(getRuntimeProgress, 1000, true);
+            timeoutId = setTimeout(getRuntimeProgress, 10000, jobId, true);
         }
 
         function stopProgressBar()

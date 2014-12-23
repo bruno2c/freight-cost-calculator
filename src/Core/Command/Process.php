@@ -4,6 +4,7 @@ namespace FreightCostCalculator\Core\Command;
 
 use Silex\Application;
 use Symfony\Component\Process\Process as SymfonyProcess;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 class Process implements ExecutableInterface
 {
@@ -35,15 +36,30 @@ class Process implements ExecutableInterface
 
     public function executeScript(Application $app)
     {
-        $process = new SymfonyProcess($app['config.resources.scripts.dir'] . $this->command->getScriptToExecute());
-        $process->start();
+        try {
+            $process = new SymfonyProcess($app['config.resources.scripts.dir'] . $this->command->getScriptToExecute());
+            $process->setTimeout(3600);
+            $process->setIdleTimeout(30);
+            $process->start();
+            $jobId = $app['predis']->get('job_id');
 
-        while ($process->isRunning()) {
-            $app['session']->set('process.output', $process->getIncrementalOutput());
-            $app['session']->set('process.error.output', $process->getIncrementalErrorOutput());
+            while ($process->isRunning()) {
+                $app['predis']->set(sprintf('%s:process:output', $jobId), $process->getOutput());
+                $app['predis']->set(sprintf('%s:process:error:output', $jobId), $process->getErrorOutput());
+                $process->checkTimeout();
+            }
+
+            if ($process->isSuccessful()) {
+                $app['predis']->set(sprintf('%s:process:finished_at', $jobId), date('Y-m-d H:i:s'));
+            }
+
+            $this->process = $process;
+        } catch (ProcessTimedOutException $e) {
+            $app['predis']->set(sprintf('%s:process:finished_at', $jobId), date('Y-m-d H:i:s'));
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
-
-		$this->process = $process;
     }
 
     public function getProcess()
