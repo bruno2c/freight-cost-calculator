@@ -6,9 +6,9 @@ interface ExecutableInterface
 {
     function execute();
 
-	function getPid();
+    function getPid();
 
-	function getOutput();
+    function getOutput();
 
     function getErrorOutput();
 }

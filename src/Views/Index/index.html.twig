@@ -129,38 +129,34 @@
             var weight = $('#calc_form_type_weight');
             var volume = $('#calc_form_type_volume');
             var targetDate = $('#calc_form_type_target_date');
-            var error = false;
+            var passed = true;
 
 			if(postcode.val() == undefined || postcode.val().length == 0){
                 addError(postcode.parents('.field'), "{{ 'error.field.empty'|trans }}");
-                error = true;
+                passed = false;
 			}
 
             if(weight.val() == undefined || weight.val().length == 0){
                 addError(weight.parents('.field'), "{{ 'error.field.empty'|trans }}");
-                error = true;
+                passed = false;
             }
 
             if(volume.val() == undefined || volume.val().length == 0){
                 addError(volume.parents('.field'), "{{ 'error.field.empty'|trans }}");
-                error = true;
+                passed = false;
             }
 
             if(!moment(targetDate.val(), 'DD-MM-YYYY').isValid()){
                 addError(targetDate.parents('.field'), "{{ 'error.field.invalid.value'|trans }}");
-                error = true;
+                passed = false;
             }
 
             if(targetDate.val() == undefined || targetDate.val().length == 0){
                 addError(targetDate.parents('.field'), "{{ 'error.field.empty'|trans }}");
-                error = true;
+                passed = false;
             }
 
-            if (error) {
-                return false;
-            }
-
-            return true;
+            return passed;
 		}
 
         function addError(fieldElement, message)
